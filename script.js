@@ -71,13 +71,20 @@ $(function () {
     $(".play-button").click(clickedPlayButton);
     $(".exercise-button").click(clickedExerciseButton);
     $(".sleep-button").click(clickedSleepButton);
+    $(".diagnostics-button").click(logPetDiagnostics);
+    $(".missing-image-button").click(requestMissingPetImage);
+    $(".type-error-button").click(triggerPetTypeError);
+    $(".violation-button").click(runSlowPetTask);
 });
 
 
 function clickedTreatButton() {
+    //  Use a number so Treat increases weight numerically.
+    var treatAmount = 1;
+
     // Treats increase happiness and weight as required.
     pet_info.happiness += 5;
-    pet_info.weight += 1;
+    pet_info.weight += treatAmount;
     pet_info.energy += 5;
 
     finishAction("Treat", getRandomComment("treat"));
@@ -253,4 +260,56 @@ function showPetMessage(action, message) {
         */
         historyEntry.prependTo(".activity-history");
     }
+}
+
+// Display examples of the six console logging techniques.
+function logPetDiagnostics() {
+    console.log("[Pet Info] Diagnostics started for " + pet_info.name);
+
+    console.warn("[Pet Warning] Playing uses 10 energy.");
+
+    console.error("[Pet Error] Example error message for HW10.");
+
+    console.table([
+        { stat: "Weight", value: pet_info.weight },
+        { stat: "Happiness", value: pet_info.happiness },
+        { stat: "Energy", value: pet_info.energy }
+    ]);
+
+    console.group("[Pet Group] Current pet details");
+    console.log("Name:", pet_info.name);
+    console.log("Weight:", pet_info.weight);
+    console.log("Happiness:", pet_info.happiness);
+    console.log("Energy:", pet_info.energy);
+    console.groupEnd();
+
+    console.log(
+        "%c[Pet Custom] Mochi's debugging dashboard",
+        "color: purple; background: lavender; font-size: 16px; padding: 6px;"
+    );
+}
+
+// Request a nonexistent image to trigger an HTTP 404.
+function requestMissingPetImage() {
+    var missingImage = new Image();
+
+    missingImage.src = "images/missing-pet.jpg";
+}
+
+// Accessing a property of undefined causes a real TypeError.
+function triggerPetTypeError() {
+    var missingPet;
+
+    console.log(missingPet.name);
+}
+
+// Intentionally block the main thread for one second.
+function runSlowPetTask() {
+    var startTime = performance.now();
+
+    while (performance.now() - startTime < 1000) {
+        // Intentionally busy to demonstrate a slow event handler.
+    }
+
+    console.log("[Pet Info] Slow pet task finished.");
 }
